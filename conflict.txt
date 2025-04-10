@@ -1,0 +1,9 @@
+Nguyên nhân:
+Conflict xảy ra khi nhiều branch cùng chỉnh sửa một file hoặc cùng một dòng code với nội dung khác nhau. Git không thể tự quyết định phiên bản nào đúng, nên cần người dùng resolve conflict thủ công.
+Ví dụ:
+Dev1 và Dev2 cùng clone repo.
+Dev1 sửa file.txt và push lên GitHub.
+Dev2 cũng sửa file.txt nhưng chưa pull code mới, rồi push => gây conflict.
+->> sử lý
+Cách 1 – Sử dụng Rebase (thường dùng khi làm việc nhóm)
+Cách 2 – Resolve trực tiếp khi bị conflict sau git pull/push:

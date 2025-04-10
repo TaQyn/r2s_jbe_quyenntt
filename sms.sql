@@ -76,25 +76,30 @@ END;
 DELIMITER ;
 -- 6. Delete a customer from the database, and also make sure to delete related Orders and LineItems. You must use a Stored Procedure.
 DELIMITER //
-CREATE PROCEDURE DeleteCustomer(IN p_customer_id INT)
+
+CREATE PROCEDURE delete_customer_with_orders(IN cus_id INT)
 BEGIN
-	DECLARE exit handler FOR SQLEXCEPTION 
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
         ROLLBACK;
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'lỗi';
     END;
-    
-    DELETE FROM LineItem
-    WHERE order_id IN (	SELECT order_id 
-						FROM Orders
-						WHERE customer_id = p_customer_id);
-                        
-    DELETE FROM Orders
-    WHERE customer_id = p_customer_id;
-    
-    DELETE FROM Customer
-    WHERE customer_id = p_customer_id;
+
+    START TRANSACTION;
+   
+    DELETE FROM LineItem 
+    WHERE order_id IN (
+        SELECT order_id 
+	FROM Orders 
+	WHERE customer_id = cus_id
+    );
+
+    DELETE FROM Orders WHERE customer_id = cus_id;
+
+    DELETE FROM Customer WHERE customer_id = cus_id;
+
+    COMMIT;
 END //
+
 DELIMITER ;
 -- 7. Update a customer in the database. You must use a Stored Procedure.
 DELIMITER //
@@ -110,8 +115,8 @@ INSERT INTO Orders(order_date, customer_id, employee_id, total)
 VALUES (NOW(), 20, 14, 20);  
 
 -- 9. Create a new LineItem in the database.
-INSERT INTO Orders(order_date, customer_id, employee_id, total)
-VALUES (NOW(), 10, 14, 20); 
+INSERT INTO LineItem(order_id, product_id, quantity, price)
+VALUES (2, 5, 3, 100.00);
 -- 10.Update the total amount for an order in the database.
 UPDATE orders 
 SET total = (	SELECT SUM(quantity * price) 
